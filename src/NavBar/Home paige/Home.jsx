@@ -1,9 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form"
+import useCard from "../../CostomHook/useCard";
+import HomeFilter from "./HomeFilter";
+import Card from "./Card";
 
 const Home = () => {
-    const [datas, setDatas] = useState([])
+    const [datas] = useCard()
     const [findData, setFindData] = useState(datas)
+    const [findDataFilter, setFindDataFilter] = useState(datas)
+    console.log(findData)
     const {
         register,
         handleSubmit,
@@ -15,14 +20,10 @@ const Home = () => {
         setFindData(searchName)
         console.log(searchName)
     }
-    useEffect(() => {
-        fetch('https://dummyjson.com/products')
-            .then(res => res.json())
-            .then(data => setDatas(data.products))
-    }, [])
     console.log(datas)
     return (
         <>
+            <HomeFilter datas={datas} setFindDataFilter={setFindDataFilter}></HomeFilter>
             <div>
                 <div className="mb-3">
                     <form onSubmit={handleSubmit(onSubmit)}>
@@ -67,33 +68,19 @@ const Home = () => {
                                 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{findData.title}</h5>
                             </a>
                             <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{findData.description}</p>
+                            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{findData.price}$</p>
                             <a href="#" className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                Read more
+                                {findData.price}
                                 <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                                     <path stroke="currentColor" d="M1 5h12m0 0L9 1m4 4L9 9" />
                                 </svg>
                             </a>
                         </div>
                     </div> :
-                    datas.slice(0, 9).map(element => <>
-                    <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                        <a href="#">
-                            <img className="rounded-t-lg h-[300px] w-full" src={element.thumbnail} alt="" />
-                        </a>
-                        <div className="p-5">
-                            <a href="#">
-                                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{element.title}</h5>
-                            </a>
-                            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{element.description}</p>
-                            <a href="#" className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                Read more
-                                <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                                    <path stroke="currentColor" d="M1 5h12m0 0L9 1m4 4L9 9" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </>)
+                        findDataFilter ? findDataFilter.map((element, indexOf) => <Card key={indexOf} element={element}></Card>)
+                            :
+                            datas.map((element, indexOf) => <Card key={indexOf} element={element}></Card>)
+
                 }
 
 
